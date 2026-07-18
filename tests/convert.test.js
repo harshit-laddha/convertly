@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { convert } = require('../src/convert');
+const { convert, convertBatch } = require('../src/convert');
 
 test('converts USD to EUR', () => {
   assert.equal(convert(100, 'USD', 'EUR'), 91);
@@ -16,4 +16,12 @@ test('is case-insensitive on currency codes', () => {
 
 test('throws on unsupported currency', () => {
   assert.throws(() => convert(10, 'USD', 'XYZ'));
+});
+
+test('converts a batch of currencies at once', () => {
+  const results = convertBatch(100, 'USD', ['EUR', 'GBP']);
+  assert.deepEqual(results, [
+    { currency: 'EUR', amount: 109.89 },
+    { currency: 'GBP', amount: 126.58 },
+  ]);
 });

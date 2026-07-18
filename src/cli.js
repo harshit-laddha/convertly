@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const { Command } = require('commander');
-const { convert } = require('./convert');
+const { convert, convertBatch } = require('./convert');
 const { loadRates } = require('./rates');
 
 const program = new Command();
@@ -16,6 +16,16 @@ program
   .action((amount, from, to) => {
     const result = convert(parseFloat(amount), from, to);
     console.log(`${amount} ${from.toUpperCase()} = ${result} ${to.toUpperCase()}`);
+  });
+
+program
+  .command('batch <amount> <from> <toCurrencies...>')
+  .description('Convert an amount from one currency into several target currencies at once')
+  .action((amount, from, toCurrencies) => {
+    const results = convertBatch(parseFloat(amount), from, toCurrencies);
+    for (const { currency, amount: converted } of results) {
+      console.log(`${amount} ${from.toUpperCase()} = ${converted} ${currency}`);
+    }
   });
 
 program
